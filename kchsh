@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+
+##
+# Prompt for a shell then uses change_shell() to set the loginShell of LDAP users
+#
+# arguments:
+#    None
+kchsh() {
+	shells=('/usr/bin/bash'
+	        '/usr/bin/zsh')
+
+	dn=$(ldapwhoami -Q)
+	if [[ $? -eq 0 ]]; then
+		dn="${dn:3}"
+	else
+		dn="uid=$USER,ou=users,dc=kyriasis,dc=com"
+	fi
+
+	printf "Current shell for %s is %s\n" $dn $(get_current_shell $dn)
+
+	select shell in "${shells[@]}" quit;
+	do
+		if [[ $shell == "quit" ]]; then
+			printf "Shell not changed.\n"
+			break
+		else
+			change_shell "$dn" "$shell"
+			if [[ $? -eq 0 ]]; then
+				printf "Shell changed successfully.\n"
+			else
+				printf "Uh-oh...\n"
+			fi
+
+			break
+		fi
+	done
+}
+
+##
+# Changes the current loginShell for an LDAP user
+#
+# arguments:
+#    $1: The distinguished name of the entry to change
+#    $2: The shell to change to
+change_shell() {
+	ldapmodify -Q >>/dev/null <<-EOF
+	dn: $1
+	changetype: modify
+	replace: loginShell
+	loginShell: $2
+	EOF
+}
+
+##
+# Get the current loginShell for an LDAP user
+#
+# arguments:
+#    $1: The distinguished name of the entry to get the shell for
+get_current_shell() {
+	local shell="$(ldapsearch -Q -b "$1" loginShell | grep '^loginShell')"
+	printf "%s\n" "${shell:12}"
+}
+
+kchsh
