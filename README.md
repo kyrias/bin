@@ -1,4 +1,0 @@
-bin
-===
-
-~/.local/bin
