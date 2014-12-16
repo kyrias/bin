@@ -96,6 +96,17 @@ def format_priority(priority):
     else:
         return text
 
+def first_line(entry_id, entry):
+    line = '\n#{:3}'.format(entry_id)
+    if 'priority' in entry:
+        priority = entry['priority']
+        line += '{} '.format(format_priority(priority))
+
+    if 'date' in entry:
+        line += '{} '.format(entry['date'])
+
+    return line
+
 def main():
     arguments = docopt(__doc__, version='todo 0.0.1.alpha')
     config = parse_args(arguments)
@@ -110,11 +121,7 @@ def main():
 
     for t_id in todo_dict:
         task = todo_dict[t_id]
-        output = "{}. ".format(t_id)
-        if 'priority' in task:
-            output += '{} '.format(format_priority(task['priority']))
-        if 'date' in task:
-            output += "{}".format(task['date'])
+        output = first_line(t_id, task)
         if 'description' in task:
             output += "\n    {}".format(task['description'])
         if 'url' in task:
