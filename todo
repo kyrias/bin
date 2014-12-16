@@ -16,7 +16,7 @@ from sys import exit
 from collections import OrderedDict
 from os import getenv, path
 from docopt import docopt
-import pytoml
+import toml
 
 
 def sort_toml(toml_dict, sort_key, rev=False):
@@ -60,10 +60,9 @@ def main():
     config = parse_args(arguments)
     print(arguments)
 
-    with open("/home/kyrias/documents/notes/TODO.toml", "rt") as in_file:
-        tasks = in_file.read()
+    todo_dict = toml.load(config.todo_file)
 
-    unsorted = OrderedDict(sorted(pytoml.loads(tasks).items()))
+    unsorted = OrderedDict(sorted(todo_dict.items()))
     sorted_toml = OrderedDict(sort_toml(unsorted, config.sort_key, config.reverse))
 
     print(sorted_toml)
