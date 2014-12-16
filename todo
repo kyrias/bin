@@ -79,12 +79,12 @@ def main():
     todo_dict = toml.load(config.todo_file)
 
     unsorted = OrderedDict(sorted(todo_dict.items()))
-    sorted_toml = OrderedDict(sort_toml(unsorted, config.sort_key, config.reverse))
+    todo_dict = OrderedDict(sort_toml(unsorted, config.sort_key, config.reverse))
 
-    print(sorted_toml)
+    print(todo_dict)
 
-    for t_id in sorted_toml:
-        task = sorted_toml[t_id]
+    for t_id in todo_dict:
+        task = todo_dict[t_id]
         output = "{}. ".format(t_id)
         if 'priority' in task:
             output += "({}) ".format(task['priority'])
