@@ -12,10 +12,10 @@ Options:
   -v --version   Show version
 """
 
-from sys import exit
 from collections import OrderedDict
 from os import getenv, path
 from docopt import docopt
+from sys import exit
 import toml
 
 def dict_sort_key(sort_key):
