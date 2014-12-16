@@ -85,6 +85,17 @@ def color_blue(text):
     color_string = '\x1b[38;2;050;150;250m{}\x1b[0m'
     return color_string.format(text)
 
+def format_priority(priority):
+    text = '({})'.format(priority)
+    if priority == 'A':
+        return color_red(text)
+    elif priority == 'B':
+        return color_yellow(text)
+    elif priority == 'C':
+        return color_blue(text)
+    else:
+        return text
+
 def main():
     arguments = docopt(__doc__, version='todo 0.0.1.alpha')
     config = parse_args(arguments)
@@ -101,7 +112,7 @@ def main():
         task = todo_dict[t_id]
         output = "{}. ".format(t_id)
         if 'priority' in task:
-            output += "({}) ".format(task['priority'])
+            output += '{} '.format(format_priority(task['priority']))
         if 'date' in task:
             output += "{}".format(task['date'])
         if 'description' in task:
