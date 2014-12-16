@@ -122,20 +122,23 @@ def main():
     print('todo file: {}'.format(config.todo_file))
     for t_id in todo_dict:
         entry = todo_dict[t_id]
-        output = first_line(t_id, entry)
+
+        print(first_line(t_id, entry))
+
         if 'description' in entry:
             description = entry['description']
             text = color_bold(description)
-            output += "\n    {}".format(text)
+            print("    {}".format(text))
+
         if 'url' in entry:
-            output += "\n    URL: {}".format(entry['url'])
+            print("    URL: {}".format(entry['url']))
+
         if 'context' in entry:
-            context_line = '\n    Context:'
+            context_line = '    Context:'
             for c in entry['context']:
                 context_line += ' {}'.format(c)
-            output += context_line
+            print(context_line)
 
-        print(output)
 
 if __name__ == '__main__':
     main()
