@@ -130,7 +130,10 @@ def main():
         if 'url' in entry:
             output += "\n    URL: {}".format(entry['url'])
         if 'context' in entry:
-            output += "\n    Contexts: {}".format(entry['context'])
+            context_line = '\n    Context:'
+            for c in entry['context']:
+                context_line += ' {}'.format(c)
+            output += context_line
 
         print(output)
 
