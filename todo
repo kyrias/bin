@@ -14,6 +14,7 @@ Options:
 
 from sys import exit
 from collections import OrderedDict
+from os import getenv, path
 from docopt import docopt
 import pytoml
 
@@ -24,22 +25,46 @@ def sort_toml(toml_dict, sort_key, rev=False):
             key=lambda d: (sort_key not in d[1], d[1].get(sort_key, None)),
             reverse=rev)
 
+class Config():
+    def __init__(self):
+        self.todo_file = None
+        self.sort_key  = None
+        self.reverse   = False
+
+def parse_args(args):
+    config = Config()
+    home_dir  = path.expanduser('~')
+    data_home = getenv('XDG_DATA_HOME')
+
+    if args['--id']:
+        config.sort_key = 'id'
+    elif args['--date']:
+        config.sort_key = 'date'
+    else:
+        config.sort_key = 'priority'
+
+    config.reverse = args['--reverse']
+
+    if args['<file>']:
+        config.todo_file = args['<file>']
+    else:
+        if data_home:
+            config.todo_file = data_home + '/todo.toml'
+        else:
+            config.todo_file = home_dir + '/.local/share/todo.toml'
+
+    return config
+
 def main():
     arguments = docopt(__doc__, version='todo 0.0.1.alpha')
+    config = parse_args(arguments)
     print(arguments)
-    if arguments['--date']:
-        sort_key = 'date'
-    elif arguments['--priority']:
-        sort_key = 'priority'
-    else:
-        sort_key = 'priority'
-    rev = arguments['--reverse']
 
     with open("/home/kyrias/documents/notes/TODO.toml", "rt") as in_file:
         tasks = in_file.read()
 
     unsorted = OrderedDict(sorted(pytoml.loads(tasks).items()))
-    sorted_toml = OrderedDict(sort_toml(unsorted, sort_key, rev))
+    sorted_toml = OrderedDict(sort_toml(unsorted, config.sort_key, config.reverse))
 
     print(sorted_toml)
 
