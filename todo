@@ -55,6 +55,22 @@ def parse_args(args):
 
     return config
 
+def color_bold(text):
+    color_string = '\x1b[1m{}\x1b[0m'
+    return color_string.format(text)
+
+def color_red(text):
+    color_string = '\x1b[38;2;250;050;050m{}\x1b[0m'
+    return color_string.format(text)
+
+def color_yellow(text):
+    color_string = '\x1b[38;2;250;150;050m{}\x1b[0m'
+    return color_string.format(text)
+
+def color_blue(text):
+    color_string = '\x1b[38;2;050;150;250m{}\x1b[0m'
+    return color_string.format(text)
+
 def main():
     arguments = docopt(__doc__, version='todo 0.0.1.alpha')
     config = parse_args(arguments)
