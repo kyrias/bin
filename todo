@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """
-Usage: todo [--priority | --date] [--reverse]
+Usage: todo [--id | --date | --priority] [--reverse] [--file <file>]
 
 Options:
-  -p --priority  Sort by priority
+  -i --id        Sort by ID
   -d --date      Sort by date
+  -p --priority  Sort by priority
   -r --reverse   Reverse sort order
-  -h --help      Show this screen.
-  -v --version   Show version.
+  -f --file      Path to todo file
+  -h --help      Show this screen
+  -v --version   Show version
 """
 
 from sys import exit
