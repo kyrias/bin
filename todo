@@ -121,14 +121,14 @@ def main():
 
     print('todo file: {}'.format(config.todo_file))
     for t_id in todo_dict:
-        task = todo_dict[t_id]
-        output = first_line(t_id, task)
-        if 'description' in task:
-            output += "\n    {}".format(task['description'])
-        if 'url' in task:
-            output += "\n    URL: {}".format(task['url'])
-        if 'context' in task:
-            output += "\n    Contexts: {}".format(task['context'])
+        entry = todo_dict[t_id]
+        output = first_line(t_id, entry)
+        if 'description' in entry:
+            output += "\n    {}".format(entry['description'])
+        if 'url' in entry:
+            output += "\n    URL: {}".format(entry['url'])
+        if 'context' in entry:
+            output += "\n    Contexts: {}".format(entry['context'])
 
         print(output)
 
