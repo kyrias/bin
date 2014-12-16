@@ -18,12 +18,26 @@ from os import getenv, path
 from docopt import docopt
 import toml
 
+def dict_sort_key(sort_key):
+    '''Return a function for sorted() to sort a dict by the given key'''
+    def key(item):
+        return (sort_key not in item[1], item[1].get(sort_key, None))
+    return key
 
-def sort_toml(toml_dict, sort_key, rev=False):
-    return sorted(
-            list(toml_dict.items()),
-            key=lambda d: (sort_key not in d[1], d[1].get(sort_key, None)),
-            reverse=rev)
+def sort_dict_by_int(d, rev):
+    '''Return dict sorted by int key'''
+    sorted_dict = [ (key, d[key]) for key in sorted(d, key=int, reverse=rev) ]
+    return OrderedDict(sorted_dict)
+
+def sort_dict(todo_dict, sort_key, rev=False):
+    todo_dict = sort_dict_by_int(todo_dict, rev)
+
+    if sort_key != 'id':
+        todo_list = list(todo_dict.items())
+        todo_dict = sorted(todo_list, reverse=rev,
+                           key=dict_sort_key(sort_key))
+
+    return OrderedDict(todo_dict)
 
 class Config():
     def __init__(self):
@@ -79,7 +93,7 @@ def main():
     todo_dict = toml.load(config.todo_file)
 
     unsorted = OrderedDict(sorted(todo_dict.items()))
-    todo_dict = OrderedDict(sort_toml(unsorted, config.sort_key, config.reverse))
+    todo_dict = sort_dict(unsorted, config.sort_key, config.reverse)
 
     print(todo_dict)
 
