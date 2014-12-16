@@ -124,7 +124,9 @@ def main():
         entry = todo_dict[t_id]
         output = first_line(t_id, entry)
         if 'description' in entry:
-            output += "\n    {}".format(entry['description'])
+            description = entry['description']
+            text = color_bold(description)
+            output += "\n    {}".format(text)
         if 'url' in entry:
             output += "\n    URL: {}".format(entry['url'])
         if 'context' in entry:
