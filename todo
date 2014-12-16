@@ -119,6 +119,7 @@ def main():
 
     print(todo_dict)
 
+    print('todo file: {}'.format(config.todo_file))
     for t_id in todo_dict:
         task = todo_dict[t_id]
         output = first_line(t_id, task)
