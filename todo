@@ -48,15 +48,6 @@ class Config():
 def parse_args(args):
     config = Config()
 
-    if args['--id']:
-        config.sort_key = 'id'
-    elif args['--date']:
-        config.sort_key = 'date'
-    else:
-        config.sort_key = 'priority'
-
-    config.reverse = args['--reverse']
-
     if args['<file>']:
         config.todo_file = args['<file>']
     else:
@@ -66,6 +57,15 @@ def parse_args(args):
         else:
             home_dir = path.expanduser('~')
             config.todo_file = home_dir + '/.local/share/todo.toml'
+
+    if args['--id']:
+        config.sort_key = 'id'
+    elif args['--date']:
+        config.sort_key = 'date'
+    else:
+        config.sort_key = 'priority'
+
+    config.reverse = args['--reverse']
 
     return config
 
