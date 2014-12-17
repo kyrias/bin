@@ -109,14 +109,11 @@ def first_line(entry_id, entry):
 def main():
 	arguments = docopt(__doc__, version='todo 0.0.1.alpha')
 	config = parse_args(arguments)
-	print(arguments)
 
 	todo_dict = toml.load(config.todo_file)
 
 	unsorted = OrderedDict(sorted(todo_dict.items()))
 	todo_dict = sort_dict(unsorted, config.sort_key, config.reverse)
-
-	print(todo_dict)
 
 	print('todo file: {}'.format(config.todo_file))
 	for t_id in todo_dict:
