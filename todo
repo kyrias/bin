@@ -47,8 +47,6 @@ class Config():
 
 def parse_args(args):
     config = Config()
-    home_dir  = path.expanduser('~')
-    data_home = getenv('XDG_DATA_HOME')
 
     if args['--id']:
         config.sort_key = 'id'
@@ -62,9 +60,11 @@ def parse_args(args):
     if args['<file>']:
         config.todo_file = args['<file>']
     else:
+        data_home = getenv('XDG_DATA_HOME')
         if data_home:
             config.todo_file = data_home + '/todo.toml'
         else:
+            home_dir = path.expanduser('~')
             config.todo_file = home_dir + '/.local/share/todo.toml'
 
     return config
