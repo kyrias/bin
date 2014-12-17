@@ -18,126 +18,125 @@ from docopt import docopt
 import toml
 
 def dict_sort_key(sort_key):
-    '''Return a function for sorted() to sort a dict by the given key'''
-    def key(item):
-        return (sort_key not in item[1], item[1].get(sort_key, None))
-    return key
+	'''Return a function for sorted() to sort a dict by the given key'''
+	def key(item):
+		return (sort_key not in item[1], item[1].get(sort_key, None))
+	return key
 
 def sort_dict_by_int(d, rev):
-    '''Return dict sorted by int key'''
-    sorted_dict = [ (key, d[key]) for key in sorted(d, key=int, reverse=rev) ]
-    return OrderedDict(sorted_dict)
+	'''Return dict sorted by int key'''
+	sorted_dict = [ (key, d[key]) for key in sorted(d, key=int, reverse=rev) ]
+	return OrderedDict(sorted_dict)
 
 def sort_dict(todo_dict, sort_key, rev=False):
-    todo_dict = sort_dict_by_int(todo_dict, rev)
+	todo_dict = sort_dict_by_int(todo_dict, rev)
 
-    if sort_key != 'id':
-        todo_list = list(todo_dict.items())
-        todo_dict = sorted(todo_list, reverse=rev,
-                           key=dict_sort_key(sort_key))
+	if sort_key != 'id':
+		todo_list = list(todo_dict.items())
+		todo_dict = sorted(todo_list, reverse=rev,
+		                   key=dict_sort_key(sort_key))
 
-    return OrderedDict(todo_dict)
+	return OrderedDict(todo_dict)
 
 class Config():
-    def __init__(self):
-        self.todo_file = None
-        self.sort_key  = None
-        self.reverse   = False
+	def __init__(self):
+		self.todo_file = None
+		self.sort_key  = None
+		self.reverse   = False
 
 def parse_args(args):
-    config = Config()
+	config = Config()
 
-    if args['<file>']:
-        config.todo_file = args['<file>']
-    else:
-        data_home = getenv('XDG_DATA_HOME')
-        if data_home:
-            config.todo_file = data_home + '/todo.toml'
-        else:
-            home_dir = path.expanduser('~')
-            config.todo_file = home_dir + '/.local/share/todo.toml'
+	if args['<file>']:
+		config.todo_file = args['<file>']
+	else:
+		data_home = getenv('XDG_DATA_HOME')
+		if data_home:
+			config.todo_file = data_home + '/todo.toml'
+		else:
+			home_dir = path.expanduser('~')
+			config.todo_file = home_dir + '/.local/share/todo.toml'
 
-    if args['--id']:
-        config.sort_key = 'id'
-    elif args['--date']:
-        config.sort_key = 'date'
-    else:
-        config.sort_key = 'priority'
+	if args['--id']:
+		config.sort_key = 'id'
+	elif args['--date']:
+		config.sort_key = 'date'
+	else:
+		config.sort_key = 'priority'
 
-    config.reverse = args['--reverse']
+	config.reverse = args['--reverse']
 
-    return config
+	return config
 
 def color_bold(text):
-    color_string = '\x1b[1m{}\x1b[0m'
-    return color_string.format(text)
+	color_string = '\x1b[1m{}\x1b[0m'
+	return color_string.format(text)
 
 def color_red(text):
-    color_string = '\x1b[38;2;250;050;050m{}\x1b[0m'
-    return color_string.format(text)
+	color_string = '\x1b[38;2;250;050;050m{}\x1b[0m'
+	return color_string.format(text)
 
 def color_yellow(text):
-    color_string = '\x1b[38;2;250;150;050m{}\x1b[0m'
-    return color_string.format(text)
+	color_string = '\x1b[38;2;250;150;050m{}\x1b[0m'
+	return color_string.format(text)
 
 def color_blue(text):
-    color_string = '\x1b[38;2;050;150;250m{}\x1b[0m'
-    return color_string.format(text)
+	color_string = '\x1b[38;2;050;150;250m{}\x1b[0m'
+	return color_string.format(text)
 
 def format_priority(priority):
-    text = '({})'.format(priority)
-    if priority == 'A':
-        return color_red(text)
-    elif priority == 'B':
-        return color_yellow(text)
-    elif priority == 'C':
-        return color_blue(text)
-    else:
-        return text
+	text = '({})'.format(priority)
+	if priority == 'A':
+		return color_red(text)
+	elif priority == 'B':
+		return color_yellow(text)
+	elif priority == 'C':
+		return color_blue(text)
+	else:
+		return text
 
 def first_line(entry_id, entry):
-    line = '\n#{:3}'.format(entry_id)
-    if 'priority' in entry:
-        priority = entry['priority']
-        line += '{} '.format(format_priority(priority))
+	line = '\n#{:3}'.format(entry_id)
+	if 'priority' in entry:
+		priority = entry['priority']
+		line += '{} '.format(format_priority(priority))
 
-    if 'date' in entry:
-        line += '{} '.format(entry['date'])
+	if 'date' in entry:
+		line += '{} '.format(entry['date'])
 
-    return line
+	return line
 
 def main():
-    arguments = docopt(__doc__, version='todo 0.0.1.alpha')
-    config = parse_args(arguments)
-    print(arguments)
+	arguments = docopt(__doc__, version='todo 0.0.1.alpha')
+	config = parse_args(arguments)
+	print(arguments)
 
-    todo_dict = toml.load(config.todo_file)
+	todo_dict = toml.load(config.todo_file)
 
-    unsorted = OrderedDict(sorted(todo_dict.items()))
-    todo_dict = sort_dict(unsorted, config.sort_key, config.reverse)
+	unsorted = OrderedDict(sorted(todo_dict.items()))
+	todo_dict = sort_dict(unsorted, config.sort_key, config.reverse)
 
-    print(todo_dict)
+	print(todo_dict)
 
-    print('todo file: {}'.format(config.todo_file))
-    for t_id in todo_dict:
-        entry = todo_dict[t_id]
+	print('todo file: {}'.format(config.todo_file))
+	for t_id in todo_dict:
+		entry = todo_dict[t_id]
 
-        print(first_line(t_id, entry))
+		print(first_line(t_id, entry))
 
-        if 'description' in entry:
-            description = entry['description']
-            text = color_bold(description)
-            print("    {}".format(text))
+		if 'description' in entry:
+			description = entry['description']
+			text = color_bold(description)
+			print("    {}".format(text))
 
-        if 'url' in entry:
-            print("    URL: {}".format(entry['url']))
+		if 'url' in entry:
+			print("    URL: {}".format(entry['url']))
 
-        if 'context' in entry:
-            context_line = '    Context:'
-            for c in entry['context']:
-                context_line += ' {}'.format(c)
-            print(context_line)
-
+		if 'context' in entry:
+			context_line = '    Context:'
+			for c in entry['context']:
+				context_line += ' {}'.format(c)
+			print(context_line)
 
 if __name__ == '__main__':
-    main()
+	main()
