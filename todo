@@ -111,9 +111,7 @@ def main():
 	config = parse_args(arguments)
 
 	todo_dict = toml.load(config.todo_file)
-
-	unsorted = OrderedDict(sorted(todo_dict.items()))
-	todo_dict = sort_dict(unsorted, config.sort_key, config.reverse)
+	todo_dict = sort_dict(todo_dict, config.sort_key, config.reverse)
 
 	print('todo file: {}'.format(config.todo_file))
 	for t_id in todo_dict:
