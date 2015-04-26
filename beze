@@ -1,0 +1,3 @@
+#!/bin/zsh
+
+exec $(print -lo ${(k)commands} | bemenu) &
