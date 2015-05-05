@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -o errexit
-
-upload=$(curl -sf -F "files[]=@\"$1\"" https://pomf.se/upload.php)
-geturl=$(jshon -e files -e 0 -e url -u <<< $upload)
-printf "%s/%s\n" "https://a.pomf.se" "$geturl"
