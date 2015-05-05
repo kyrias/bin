@@ -1,0 +1,85 @@
+#!/usr/bin/env ruby
+
+require 'openssl'
+require 'base64'
+
+# Parse SSH keys to be used by OpenSSL lib
+# Taken from Zerg Support project.
+# See: https://github.com/pwnall/zerg_support/blob/faaa5dd140c95588a1db2a25f6c9d9cacb4f9b0a/lib/zerg_support/open_ssh.rb
+module OpenSSHKeyConverter
+	# The components in a openssh .pub / known_host RSA public key.
+	RSA_COMPONENTS = ['ssh-rsa', :e, :n]
+	# The components in a openssh .pub / known_host DSA public key.
+	DSA_COMPONENTS = ['ssh-dss', :p, :q, :g, :pub_key]
+
+	# Decodes an openssh public key from the format of .pub & known_hosts files.
+	def self.decode_pubkey(string)
+		components = unpack_pubkey_components Base64.decode64(string)
+		case components.first
+		when RSA_COMPONENTS.first
+			ops = RSA_COMPONENTS.zip components
+			key = OpenSSL::PKey::RSA.new
+		when DSA_COMPONENTS.first
+			ops = DSA_COMPONENTS.zip components
+			key = OpenSSL::PKey::DSA.new
+		else
+			fail "Unsupported key type #{components.first}"
+		end
+		ops.each do |o|
+			next unless o.first.is_a? Symbol
+			key.send "#{o.first}=", decode_mpi(o.last)
+		end
+		key
+	end
+
+	# Loads a serialized key from an IO instance (File, StringIO).
+	def self.load_key(io)
+		serialized_key = io.read
+		header = first_line serialized_key
+		if header.index 'RSA'
+			OpenSSL::PKey::RSA.new serialized_key
+		elsif header.index 'DSA'
+			OpenSSL::PKey::DSA.new serialized_key
+		else
+			fail 'Unknown key type'
+		end
+	end
+
+	# Extracts the first line of a string.
+	def self.first_line(string)
+		string[0, string.index(/\r|\n/) || string.len]
+	end
+
+	# Unpacks the string components in an openssh-encoded pubkey.
+	def self.unpack_pubkey_components(str)
+		cs = []
+		i = 0
+		while i < str.length
+			len = str[i, 4].unpack('N').first
+			cs << str[i + 4, len]
+			i += 4 + len
+		end
+		cs
+	end
+
+	# Decodes an openssh-mpi-encoded integer.
+	def self.decode_mpi(mpi_str)
+		mpi_str.unpack('C*').inject(0) { |a, e| (a << 8) | e }
+	end
+end
+
+path_to_key = ARGV[0]
+
+key = File.read(path_to_key).split[1]
+key = OpenSSHKeyConverter.decode_pubkey(key)
+key = OpenSSL::PKey::RSA.new(key)
+
+data_string = [7].pack('N') + 'ssh-rsa' + key.public_key.e.to_s(0) + key.public_key.n.to_s(0)
+
+sha_digest = OpenSSL::Digest::SHA256.digest(data_string)
+sha_fingerprint = Base64.encode64(sha_digest)
+
+md5_fingerprint = OpenSSL::Digest::MD5.hexdigest(data_string).scan(/../).join(':')
+
+puts('MD5:    ' + md5_fingerprint)
+puts('SHA256: ' + sha_fingerprint)
