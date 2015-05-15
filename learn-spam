@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
-sb_mboxtrain.py -d "$MAIL"/spambayes.db -s "$MAIL"/learn-spam -r
-rsync "$MAIL"/spambayes.db \
+if ! [[ -n "$MAILDIR" ]]; then
+	printf '%s\n' 'warning: $MAILDIR not set, falling back to $HOME/mail'
+	MAILDIR="$HOME"/mail
+fi
+
+sb_mboxtrain.py -d "$MAILDIR"/spambayes.db -s "$MAILDIR"/learn-spam -r
+rsync "$MAILDIR"/spambayes.db \
       kyrias@theos.kyriasis.com:Mail/spambayes.db \
       --update --checksum --human-readable --progress
