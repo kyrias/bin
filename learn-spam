@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+sb_mboxtrain.py -d "$MAIL"/spambayes.db -s "$MAIL"/learn-spam -r
+rsync "$MAIL"/spambayes.db \
+      kyrias@theos.kyriasis.com:Mail/spambayes.db \
+      --update --checksum --human-readable --progress
