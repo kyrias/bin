@@ -1,0 +1,40 @@
+#!/usr/bin/env zsh
+
+scriptname=${0##*/}
+
+usage() {
+	cat <<EOF
+usage: $scriptname [mac] [ip]
+
+$scriptname assign ip to specified mac-address
+EOF
+}
+if [[ -z $1 ]]; then
+	usage
+	exit 0
+fi
+
+zmodload zsh/mapfile
+
+dhosts_name=/etc/dnsmasq-dhcp_hosts.conf
+dhosts=$mapfile[$dhosts_name]
+
+valid_mac="^([[:xdigit:]][[:xdigit:]]:?){6}$"
+
+if ! [[ $1 =~ $valid_mac ]] ; then
+	print >&2 "Invalid mac address.\n"
+	exit 1
+fi
+
+if print $dhosts | grep -q $1; then
+	printf >&2 "An entry with MAC-address %s already exists.\n" $1
+	exit 1
+fi
+
+if print $dhosts | grep -q $2; then
+	printf >&2 "An entry with IP-address %s already exist.\n" $2
+	exit 1
+fi
+
+print "$1,$2" >> $dhosts_name
+pkill -x -HUP dnsmasq
