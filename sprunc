@@ -1,0 +1,15 @@
+#!/usr/bin/busybox sh
+
+stdin=$(cat /dev/stdin)
+uuenc=$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "$stdin")
+
+content_length=$(( ${#uuenc} + $(expr length "sprunge=") ))
+
+/usr/bin/nc sprunge.us 80 <<EOF | awk '/17/{getline; print}'
+POST / HTTP/1.1
+Host:sprunge.us
+Content-Type:application/x-www-form-urlencoded
+Content-Length:$content_length
+
+sprunge=$uuenc
+EOF
