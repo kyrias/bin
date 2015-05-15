@@ -1,0 +1,14 @@
+#!/usr/bin/bash
+keys=()
+
+fingerprints=$(gpg --list-public-keys | grep 'Key fingerprint' | sed 's/\s\{6\}Key fingerprint = //')
+while read -r fp; do
+	keys+=("$fp")
+done <<<"$fingerprints"
+
+for key in "${keys[@]}"; do
+	gpg --list-sigs "$key" | grep 'sig' | sed 's/^sig .\s\{8\}//' | cut -d' ' -f1 | grep "$1" 2>&1 >/dev/null
+	if [[ $? == 0 ]]; then
+		printf "%s %s\n" "You signed:" "$key"
+	fi
+done
