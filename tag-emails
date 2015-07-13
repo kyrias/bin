@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -o errexit
+set -o pipefail
+
+notmuch tag --batch <<EOF
++inbox -- folder:inbox and tag:unread
+-inbox -- not folder:inbox
+
++sent -- folder:sent
+-sent -- not folder:sent
+
++archive -- folder:archive
+-archive -- not folder:archive
+
++drafts -- folder:drafts
+-drafts -- not folder:drafts
+
++spam -- folder:spam
+-spam -- not folder:spam
+
++trash -- folder:trash
+-trash -- not folder:trash
+
+
++learn-ham -- folder:learn-ham
+-learn-ham -- not folder:learn-ham
+
++learn-spam -- folder:learn-spam
+-learn-spam -- not folder:learn-spam
+
+
++arch-bugs -- folder:arch-bugs
++arch-dev-public -- folder:arch-dev-public
++arch-mirrors -- folder:arch-mirrors
++arch-women -- folder:arch-women
++aur-dev -- folder:aur-dev
++aur-general -- folder:aur-general
++aur-requests -- folder:aur-requests
++ccna -- folder:ccna
++isync-devel -- folder:isync-devel
++johannes-lothberg-gmail -- folder:johannes-lothberg-gmail
++openldap-technical -- folder:openldap-technical
++opensmtpd -- folder:opensmtpd
++openssh-unix-dev -- folder:openssh-unix-dev
++pacman-dev -- folder:pacman-dev
++ajatt -- folder:ajatt
++lojban -- folder:lojban
++git -- folder:git
+
+EOF
