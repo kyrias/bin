@@ -8,12 +8,14 @@ fi
 
 case $1 in
 	lower)
-		amixer -D pulse -q set Master $step%-
+		pactl set-sink-mute 1 false
+		pactl set-sink-volume 1 -"$step"%
 		;;
 	raise)
-		amixer -D pulse -q set Master $step%+
+		pactl set-sink-mute 1 false
+		pactl set-sink-volume 1 +"$step"%
 		;;
 	mute)
-		amixer -D pulse -q set Master toggle
+		pactl set-sink-mute 1 toggle
 		;;
 esac
