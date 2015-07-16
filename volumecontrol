@@ -18,4 +18,7 @@ case $1 in
 	mute)
 		pactl set-sink-mute 1 toggle
 		;;
+	mute-mic)
+		pactl set-source-mute 2 toggle
+		;;
 esac
