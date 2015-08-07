@@ -6,10 +6,16 @@ create_snapshot() {
 	    printf "==> Failet to create a snaphot of %s in %s\n" "$1" "$2"
 }
 
-SNAPSHOTS=/snapshots
-SNAPDIR="$SNAPSHOTS"/"$(date +%Y-%m-%dT%H:%M:%S%z)"
-printf "==> Creating snapshots in %s\n" "$SNAPDIR"
 
-sudo mkdir "$SNAPDIR"
-create_snapshot / "$SNAPDIR"/root
-create_snapshot /home "$SNAPDIR"/home
+main() {
+	local SNAPSHOTS=/snapshots
+	local SNAPDIR="$SNAPSHOTS"/"$(date +%Y-%m-%dT%H:%M:%S%z)"
+	printf "==> Creating snapshots in %s\n" "$SNAPDIR"
+
+	sudo mkdir "$SNAPDIR"
+	create_snapshot / "$SNAPDIR"/root
+	create_snapshot /home "$SNAPDIR"/home
+}
+
+
+main "$@"
