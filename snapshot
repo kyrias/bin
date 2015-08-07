@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+create_snapshot() {
+	sudo btrfs subvolume snapshot -r "$1" "$2" &&
+	    printf "==> Successfully created a snaphot of %s in %s\n" "$1" "$2" ||
+	    printf "==> Failet to create a snaphot of %s in %s\n" "$1" "$2"
+}
+
+SNAPSHOTS=/snapshots
+SNAPDIR="$SNAPSHOTS"/"$(date +%Y-%m-%dT%H:%M:%S%z)"
+printf "==> Creating snapshots in %s\n" "$SNAPDIR"
+
+sudo mkdir "$SNAPDIR"
+create_snapshot / "$SNAPDIR"/root
+create_snapshot /home "$SNAPDIR"/home
