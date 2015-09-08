@@ -5,8 +5,8 @@ create_snapshot() {
 	local to="$2"/"$(date +%Y-%m-%dT%H:%M:%S%z)"
 	sudo mkdir "$to"
 	sudo btrfs subvolume snapshot -r "$from" "$to" &&
-	    printf "==> Successfully created a snaphot of %s in %s\n" "$from" "$to" ||
-	    printf "==> Failet to create a snaphot of %s in %s\n"     "$from" "$to"
+	    printf "==> Successfully created a snapshot of %s in %s\n" "$from" "$to" ||
+	    printf "==> Failed to create a snapshot of %s in %s\n"     "$from" "$to"
 }
 
 
