@@ -1,20 +1,21 @@
 #!/usr/bin/env bash
 
 create_snapshot() {
-	sudo btrfs subvolume snapshot -r "$1" "$2" &&
-	    printf "==> Successfully created a snaphot of %s in %s\n" "$1" "$2" ||
-	    printf "==> Failet to create a snaphot of %s in %s\n" "$1" "$2"
+	local from="$1"
+	local to="$2"/"$(date +%Y-%m-%dT%H:%M:%S%z)"
+	sudo mkdir "$to"
+	sudo btrfs subvolume snapshot -r "$from" "$to" &&
+	    printf "==> Successfully created a snaphot of %s in %s\n" "$from" "$to" ||
+	    printf "==> Failet to create a snaphot of %s in %s\n"     "$from" "$to"
 }
 
 
 main() {
-	local SNAPSHOTS=/snapshots
-	local SNAPDIR="$SNAPSHOTS"/"$(date +%Y-%m-%dT%H:%M:%S%z)"
-	printf "==> Creating snapshots in %s\n" "$SNAPDIR"
+	local rootmount=/media/"$SHORTHOST"-ssd-1
+	printf "==> Creating snapshots in %s\n" "$rootmount"
 
-	sudo mkdir "$SNAPDIR"
-	create_snapshot / "$SNAPDIR"/root
-	create_snapshot /home "$SNAPDIR"/home
+	create_snapshot "$rootmount"/root "$rootmount"/snap-root
+	create_snapshot "$rootmount"/home "$rootmount"/snap-home
 }
 
 
