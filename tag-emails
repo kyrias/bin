@@ -32,6 +32,7 @@ notmuch tag --batch <<EOF
 +arch-bugs -- folder:arch-bugs
 +arch-dev-public -- folder:arch-dev-public
 +arch-mirrors -- folder:arch-mirrors
++arch-projects -- folder:arch-projects
 +arch-women -- folder:arch-women
 +aur-dev -- folder:aur-dev
 +aur-general -- folder:aur-general
