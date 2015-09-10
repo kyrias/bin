@@ -2,7 +2,7 @@
 bin
 ===
 
-(Some) of my "$HOME"/.local/bin
+(Some) of my ``"$HOME"/.local/bin``
 
 License
 =======
