@@ -1,14 +1,20 @@
 #!/usr/bin/env bash
 
+##
+# Create a screenshot using scrot, then dump it in ~/dumpdir for
+# dumpwatch to upload it to the appropriate server.
+#
+# This script requires dumpwatch to already be running.
+#
+
 set -o errexit
 
-id=$(mktemp /tmp/XXXXXXXXXX).png
-host='theos.kyriasis.com'
-url="https://$host/~kyrias/s/$(basename $id)"
+if [[ -z "$TMPDIR" ]]; then
+	TMPDIR=/tmp
+fi
 
-scrot "$id"
-scp -q "$id" "$host":public_html/s/
-rm "$id"
+file=$(mktemp -u XXXXXXXXXX.png)
 
-printf "URL: %s\n" "$url"
-printf "%s\n" "$url" | xclip -selection clipboard
+scrot "$TMPDIR"/"$file"
+
+mv "$TMPDIR"/"$file" "$HOME"/dumpdir/"$file"
