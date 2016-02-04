@@ -9,7 +9,7 @@ if [[ -z "$dump_user" ]]; then
 fi
 
 while read -r file; do
-	scp -q "$HOME"/dumpdir/"$file" "$dump_host":public_html/d/
+	scp -o BatchMode=yes -q "$HOME"/dumpdir/"$file" "$dump_host":public_html/d/
 
 	url="https://$dump_host/~$dump_user/d/$file"
 	printf "Dumping file %s to %s. URL: %s\n" "$file" "$dump_host" "$url"
