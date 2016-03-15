@@ -1,22 +1,29 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
-if [[ -n "$2" ]]; then
-	step=$2
+default_sink=$(pactl info | grep 'Default Sink' | cut -d' ' -f3)
+
+if [[ "$#" -eq 3 ]]; then
+	step="$2"
+	sink="$3"
+elif [[ "$#" -eq 2 ]]; then
+	sink="$default_sink"
+	step="$2"
 else
+	sink="$default_sink"
 	step=5
 fi
 
 case $1 in
 	lower)
-		pactl set-sink-mute 1 false
-		pactl set-sink-volume 1 -"$step"%
+		pactl set-sink-mute "$sink" false
+		pactl set-sink-volume "$sink" -"$step"%
 		;;
 	raise)
-		pactl set-sink-mute 1 false
-		pactl set-sink-volume 1 +"$step"%
+		pactl set-sink-mute "$sink" false
+		pactl set-sink-volume "$sink" +"$step"%
 		;;
 	mute)
-		pactl set-sink-mute 1 toggle
+		pactl set-sink-mute "$sink" toggle
 		;;
 	mute-mic)
 		pactl set-source-mute 2 toggle
