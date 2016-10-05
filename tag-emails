@@ -7,16 +7,11 @@ notmuch tag --batch <<EOF
 -inbox -- not folder:inbox
 
 +sent -- folder:sent
--sent -- not folder:sent
-
 +archive -- folder:archive
--archive -- not folder:archive
 
 +drafts -- folder:drafts
--drafts -- not folder:drafts
 
 +spam -- folder:spam
--spam -- not folder:spam
 
 +trash -- folder:trash
 -trash -- not folder:trash
@@ -31,8 +26,10 @@ notmuch tag --batch <<EOF
 
 +arch-bugs -- folder:arch-bugs
 +arch-dev-public -- folder:arch-dev-public
++arch-devops -- folder:arch-devops
 +arch-mirrors -- folder:arch-mirrors
 +arch-projects -- folder:arch-projects
++arch-security -- folder:arch-security
 +arch-women -- folder:arch-women
 +aur-dev -- folder:aur-dev
 +aur-general -- folder:aur-general

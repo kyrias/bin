@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+
+/usr/bin/ssh demize@orion.archlinux.org sendmail -B 8BITMIME "$@"
