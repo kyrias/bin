@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
 
-if ! [[ -n "$MAILDIR" ]]; then
-	printf '%s\n' 'warning: $MAILDIR not set, falling back to $HOME/mail'
-	MAILDIR="$HOME"/mail
-fi
-
-sb_mboxtrain.py -d "$MAILDIR"/spambayes.db -g "$MAILDIR"/learn-ham -r
+sb_mboxtrain.py -d "$MAILDIR"/spambayes.db -g /home/kyrias/.cache/learn-ham -r
 rsync "$MAILDIR"/spambayes.db \
       kyrias@theos.kyriasis.com:Mail/spambayes.db \
       --update --checksum --human-readable --progress
