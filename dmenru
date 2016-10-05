@@ -1,3 +1,0 @@
-#!/bin/zsh
-
-print -lo ${(k)commands} | dmenu -i -fn 'DejaVu Sans Mono 9' "$@" | /bin/zsh &
