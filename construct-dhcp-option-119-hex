@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+
+# Quick and dirty script to construct a colon separated hex string of domain
+# names for DHCP option 119
+
+import sys
+
+output = []
+for line in sys.stdin:
+    for section in line.strip().split('.'):
+        hex_section = []
+        for char in section:
+            hex_section.append(format(ord(char), '02x'))
+        hex_section.insert(0, format(len(hex_section), '02x'))
+        output.extend(hex_section)
+    output.append('00')
+
+print(':'.join(output))
