@@ -1,5 +1,6 @@
 #!/usr/bin/env zsh
 
+step=5
 sink="@DEFAULT_SINK@"
 source="@DEFAULT_SOURCE@"
 
@@ -8,8 +9,6 @@ if [[ "$#" -eq 3 ]]; then
 	sink="$3"
 elif [[ "$#" -eq 2 ]]; then
 	step="$2"
-else
-	step=5
 fi
 
 case $1 in
