@@ -13,11 +13,9 @@ fi
 
 case $1 in
 	lower)
-		pactl set-sink-mute "$sink" false
 		pactl set-sink-volume "$sink" -"$step"%
 		;;
 	raise)
-		pactl set-sink-mute "$sink" false
 		pactl set-sink-volume "$sink" +"$step"%
 		;;
 	mute)
