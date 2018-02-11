@@ -1,15 +1,14 @@
 #!/usr/bin/env zsh
 
-default_sink=$(pactl info | grep 'Default Sink' | cut -d' ' -f3)
+sink="@DEFAULT_SINK@"
+source="@DEFAULT_SOURCE@"
 
 if [[ "$#" -eq 3 ]]; then
 	step="$2"
 	sink="$3"
 elif [[ "$#" -eq 2 ]]; then
-	sink="$default_sink"
 	step="$2"
 else
-	sink="$default_sink"
 	step=5
 fi
 
@@ -26,6 +25,6 @@ case $1 in
 		pactl set-sink-mute "$sink" toggle
 		;;
 	mute-mic)
-		pactl set-source-mute 2 toggle
+		pactl set-source-mute "$source" toggle
 		;;
 esac
