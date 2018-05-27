@@ -1,0 +1,5 @@
+#!/usr/bin/env zsh
+# Hack for alot, since it tries to pass the command to execute in the new terminal as multiple arguments.
+# https://github.com/pazz/alot/issues/1212
+
+exec termite -e "$*"
