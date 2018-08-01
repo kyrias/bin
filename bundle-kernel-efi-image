@@ -1,0 +1,82 @@
+#!/usr/bin/bash
+
+die() {
+	printf '%s\n' "$1" >&2
+	exit 1
+}
+
+fallback=0
+
+while :; do
+	case "$1" in
+		--kernel)
+			if [[ -n "$2" ]]; then
+				kernel="$2"
+				shift
+			else
+				die 'ERROR: "--kernel" requires a non-empty argument.'
+			fi
+			;;
+		--kernel=?*)
+			kernel="${1#*=}" # Delete everthing up to '=' and assign the rest
+			;;
+		--fallback)
+			fallback=1
+			;;
+		--)
+			shift
+			break
+			;;
+		-?*)
+			printf 'WARN: Unknown option (ignored): %s\n' "$1" >&2
+			;;
+		*)
+			break
+	esac
+
+	shift
+done
+
+if [[ -z "$kernel" ]]; then
+	die 'ERROR: No kernel argument provided, bailing.'
+	exit 1
+fi
+
+osrelease="$(mktemp)"
+trap 'rm $osrelease' EXIT
+cat /usr/lib/os-release <(echo BUILD_ID="$kernel") >"$osrelease"
+
+initramfs=initramfs-"$kernel"
+imagename="$kernel"
+
+initimages=(/boot/intel-ucode.img /boot/"$initramfs".img)
+
+objcopy \
+	--add-section .osrel="$osrelease" --change-section-vma .osrel=0x20000 \
+	--add-section .cmdline=/boot/bundle/cmdline.txt --change-section-vma .cmdline=0x30000 \
+	--add-section .linux=/boot/vmlinuz-"$kernel" --change-section-vma .linux=0x2000000 \
+	--add-section .initrd=<(cat "${initimages[@]}") --change-section-vma .initrd=0x3000000 \
+	/usr/lib/systemd/boot/efi/linuxx64.efi.stub /boot/EFI/Linux/"$imagename".efi \
+	|| die "ERROR: Failed to create EFI bundle for kernel $kernel."
+printf '==> EFI bundle for kernel %s created.\n' "$kernel"
+
+
+if (( "$fallback" )); then
+	osrelease_fallback="$(mktemp)"
+	trap 'rm $osrelease_fallback' EXIT
+	cat /usr/lib/os-release <(echo BUILD_ID="$kernel-fallback") >"$osrelease_fallback"
+
+	initramfs="$initramfs"-fallback
+	imagename="$imagename"-fallback
+
+	initimages=(/boot/intel-ucode.img /boot/"$initramfs".img)
+
+	objcopy \
+		--add-section .osrel="$osrelease_fallback" --change-section-vma .osrel=0x20000 \
+		--add-section .cmdline=/boot/bundle/cmdline.txt --change-section-vma .cmdline=0x30000 \
+		--add-section .linux=/boot/vmlinuz-"$kernel" --change-section-vma .linux=0x2000000 \
+		--add-section .initrd=<(cat "${initimages[@]}") --change-section-vma .initrd=0x3000000 \
+		/usr/lib/systemd/boot/efi/linuxx64.efi.stub /boot/EFI/Linux/"$imagename".efi \
+		|| die "ERROR: Failed to create EFI bundle for kernel $kernel."
+	printf '==> Fallback EFI bundle for kernel %s created.\n' "$kernel"
+fi
