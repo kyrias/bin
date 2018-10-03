@@ -1,0 +1,16 @@
+#!/usr/bin/env zsh
+
+sender="$(printf '%q' "$1")"
+if [[ -n "$2" ]]; then
+	recipient="--to $(printf '%q' "$2")"
+fi
+
+subject="$(printf '%q' "$3")"
+if [[ -n "$4" ]]; then
+	tags_argument="$(printf '--tags "%q"' "$4")"
+fi
+template="$(mktemp)"
+cat - > "$template"
+
+termite -e "alot compose --sender \"$sender\" $recipient --subject \"$subject\" --template \"$template\" $tags_argument"
+rm "$template"
