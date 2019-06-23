@@ -3,13 +3,17 @@
 
 # requires pango-view awk
 
-if [ "$#" -lt 2 ]; then
-    printf 'usage: ftdetect family glyph\n' >&2
+while getopts :f: arg; do
+    case $arg in
+        f) family=$OPTARG ;;
+        *) exit
+    esac
+done
+shift $((OPTIND - 1))
+
+if [ ! "$1" ]; then
+    printf 'usage: ftdetect [-f family] glyph\n' >&2
     exit 1
 fi
 
-lastmatch() {
-    awk -F \" -v pattern="$1" '$0 ~ pattern {m = $2} END {print m}'
-}
-
-FC_DEBUG=4 pango-view -q --font "$1" -t "$2" 2>&1 | lastmatch 'family: '
+FC_DEBUG=4 pango-view -qt "$1" --font "${family:-sans}" 2>&1 | awk 'BEGIN{FS="\""}/family: /{m = $2}END{print m}'
